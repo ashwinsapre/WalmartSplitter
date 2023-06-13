@@ -1,0 +1,181 @@
+<html>
+<head>
+    <title>Table Example</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            align-items: center;
+            align-content: center;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            align-content: center;
+        }
+        .totals-row{
+            font-weight: bold;
+        }
+    </style>
+    <script type="text/javascript">
+        function getPersons(){
+            return document.getElementById('full-table').rows[0].cells.length-2;
+        }
+
+        function getItems(){
+            return document.getElementById("full-table").rows.length-2;
+        }
+
+        function setActionListeners(){
+            var checkboxes = document.querySelectorAll(".person-involved");
+            checkboxes.forEach(element => {
+                element.addEventListener("change", recalc)
+            });
+        }
+        function ready(){
+            var checkboxes = document.querySelectorAll(".person-involved");
+            checkboxes.forEach(element => {
+                element.addEventListener("change", recalc)
+            });
+
+            var prices = document.querySelectorAll(".price");
+            var totalPrice = 0.0;
+            prices.forEach(element => {
+                totalPrice = totalPrice+parseFloat(element.innerHTML);
+            })
+            document.getElementById("totalPrice").innerHTML = totalPrice;  
+        }
+        function recalc(){
+            n_items=getItems();
+            n_persons=getPersons();
+            person_totals = new Map();
+            for (let p=0;p<=n_persons;p++){
+                person_totals[p]=0.0
+            }
+            
+            for (let i=1;i<=n_items;i++){
+                let item_class="i"+i.toString();
+                //console.log(item_class);
+                let item_price = parseFloat(document.getElementsByClassName(item_class)[0].innerHTML);
+                //console.log(item_price);
+                let n_divisions = 0;
+                for (let j=1;j<=n_persons;j++){
+                    let person_class = "p"+j.toString();
+                    //console.log("class="+person_class+item_class);
+                    if (document.getElementsByClassName(person_class+item_class)[0].checked == true){
+                        n_divisions+=1;
+                    }
+                }
+                //console.log("numdiv="+n_divisions);
+                if (n_divisions===0){
+                    person_totals[0]=person_totals[0]+item_price;
+                }
+                else{
+                    for (let j=1;j<=n_persons;j++){
+                        let person_class = "p"+j.toString();
+                        if (document.getElementsByClassName(person_class+item_class)[0].checked == true){
+                            person_totals[j]=person_totals[j]+item_price/n_divisions;
+                            //document.getElementById("p"+item_class+"total").innerHTML = document.getElementById("p"+item_class+"total").innerHTML.parseFloat + item_price/n_divisions;
+                   }
+                }
+                }
+                
+                for (let i=1;i<=n_persons;i++){
+                    //console.log("p"+i.toString()+"total");
+                    document.getElementById("p"+i.toString()+"total").innerHTML=person_totals[i];
+                }
+            }
+            document.getElementById("rem-total").value = person_totals[0].toString();
+        }
+        function addPerson(){
+            indexofnewperson = getPersons()+1
+            classofnewperson="p"+indexofnewperson.toString();
+            rows = document.querySelectorAll(".items-row");
+            rows.forEach((element, i) => {
+                const input=document.createElement("input");
+                input.setAttribute('type','checkbox');
+                input.setAttribute('class','person-involved '+classofnewperson+'i'+(i+1).toString());
+                const cell= document.createElement("td");
+                cell.appendChild(input);
+                element.appendChild(cell);
+            })
+
+            rows = document.querySelectorAll(".persons-row");
+            rows.forEach(element => {
+                const cell = document.createElement("th");
+                cell.innerHTML = "Person "+indexofnewperson.toString();
+                element.appendChild(cell);
+            })
+
+            rows = document.querySelectorAll(".totals-row");
+            rows.forEach(element => {
+                const cell = document.createElement("td");
+                cell.setAttribute('id', classofnewperson+"total");
+                cell.innerHTML = 0;
+                element.appendChild(cell);
+            })
+            setActionListeners();
+            recalc();
+        }
+        
+    </script>
+</head>
+<body onload="ready()">
+    <table id="full-table">
+        <thead>
+            <tr class="persons-row">
+                <th>Item</th>
+                <th>Price</th>
+                <th>Person 1 </th>
+                <th>Person 2 </th>
+                <th>Person 3 </th>
+                <th>Person 4 </th>
+                <th>Person 5 </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="items-row">
+                <td>item1</td>
+                <td class="price i1">14.2</td>
+                <td><input type="checkbox" class="person-involved p1i1"></td>
+                <td><input type="checkbox" class="person-involved p2i1"></td>
+                <td><input type="checkbox" class="person-involved p3i1"></td>
+                <td><input type="checkbox" class="person-involved p4i1"></td>
+                <td><input type="checkbox" class="person-involved p5i1"></td>
+            </tr>
+            <tr class="items-row">
+                <td>item2</td>
+                <td class="price i2">5</td>
+                <td><input type="checkbox" class="person-involved p1i2"></td>
+                <td><input type="checkbox" class="person-involved p2i2"></td>
+                <td><input type="checkbox" class="person-involved p3i2"></td>
+                <td><input type="checkbox" class="person-involved p4i2"></td>
+                <td><input type="checkbox" class="person-involved p5i2"></td>
+            </tr>
+            <tr class="items-row">
+                <td>item3</td>
+                <td class="price i3">1.00</td>
+                <td><input type="checkbox" class="person-involved p1i3"></td>
+                <td><input type="checkbox" class="person-involved p2i3"></td>
+                <td><input type="checkbox" class="person-involved p3i3"></td>
+                <td><input type="checkbox" class="person-involved p4i3"></td>
+                <td><input type="checkbox" class="person-involved p5i3"></td>
+            </tr>
+            <tr class="totals-row">
+                <td>Totals </td>
+                <td id="totalPrice">All items total </td>
+                <td id="p1total">0</td>
+                <td id="p2total">0</td>
+                <td id="p3total">0</td>
+                <td id="p4total">0</td>
+                <td id="p5total">0</td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <input type="button" value="Add a participant" id="add-person" onclick="addPerson()">
+    <br>
+    Amount unaccounted for:
+    <input type="text" value="" id="rem-total" disabled=true>
+</body>
+</html>
