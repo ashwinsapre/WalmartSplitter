@@ -23,8 +23,7 @@ function ready(){
     prices.forEach(element => {
         totalPrice = totalPrice+parseFloat(element.innerHTML);
     })
-    document.getElementById("totalPrice").innerHTML = totalPrice;  
-    importData();
+    document.getElementById("totalPrice").innerHTML = totalPrice; 
 }
 function recalc(){
     n_items=getItems();
@@ -99,6 +98,26 @@ function addPerson(){
     recalc();
 }
 
+function loadFile(){
+    let input = document.createElement('input');
+    input.type = 'file';
+    input.onchange = _ => {
+    // you can use this method to get file and perform respective operations
+            let files = Array.from(input.files);
+            console.log(files);
+        };
+    input.click();
+    $.ajax({
+        type: "POST",
+        url: "/parse.py",
+        data: { param: files },
+        success: callbackFunc
+    });
+}
+function callbackFunc(response) {
+    importData();
+}
+
 function importData(){
     var i = 1;
     fetch("./items.json")
@@ -106,7 +125,7 @@ function importData(){
         .then(data => {
             for(let key in data){
                 if (data.hasOwnProperty(key) && key!="ORDER TOTAL"){
-                    console.log(key+" : "+data[key]);
+                    //console.log(key+" : "+data[key]);
                     var table = document.getElementById("full-table");
                     var row = table.insertRow(table.rows.length-1);
                     row.setAttribute('class', 'items-row');
@@ -121,6 +140,7 @@ function importData(){
                 }
             }
             setActionListeners();
-            
+            document.getElementById("add-bill").disabled=true;
+            document.getElementById("add-person").disabled=false;
         });
 }
