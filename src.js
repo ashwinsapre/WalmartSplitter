@@ -11,12 +11,13 @@ function setActionListeners(){
     checkboxes.forEach(element => {
         element.addEventListener("change", recalc)
     });
+    var names = document.querySelectorAll(".persons-row");
+    names.forEach(element => {
+        element.addEventListener("onClick", rename)
+    });
 }
 function ready(){
-    var checkboxes = document.querySelectorAll(".person-involved");
-    checkboxes.forEach(element => {
-        element.addEventListener("change", recalc)
-    });
+    setActionListeners();
 
     var prices = document.querySelectorAll(".price");
     var totalPrice = 0.0;
@@ -24,6 +25,7 @@ function ready(){
         totalPrice = totalPrice+parseFloat(element.innerHTML);
     })
     document.getElementById("totalPrice").innerHTML = totalPrice; 
+    importData();
 }
 function recalc(){
     n_items=getItems();
@@ -83,6 +85,8 @@ function addPerson(){
     rows = document.querySelectorAll(".persons-row");
     rows.forEach(element => {
         const cell = document.createElement("th");
+        cell.setAttribute('id', 'p'+indexofnewperson);
+        cell.setAttribute('onClick', 'rename()');
         cell.innerHTML = "Person "+indexofnewperson.toString();
         element.appendChild(cell);
     })
@@ -97,29 +101,38 @@ function addPerson(){
     setActionListeners();
     recalc();
 }
-
-function loadFile(){
-    let input = document.createElement('input');
-    input.type = 'file';
-    input.onchange = _ => {
-    // you can use this method to get file and perform respective operations
-            let files = Array.from(input.files);
-            console.log(files);
-        };
-    input.click();
-    $.ajax({
-        type: "POST",
-        url: "/parse.py",
-        data: { param: files },
-        success: callbackFunc
-    });
-}
-function callbackFunc(response) {
-    importData();
+function rename(dorename){
+    document.getElementById('add-person').disabled=true;
+    var npersons = getPersons();
+    if (dorename==1){
+        console.log("Renaming...");
+        document.getElementById("rename").value = "Done Renaming";
+        for (let i=1;i<=npersons;i++){
+            let element = document.querySelectorAll("#p"+i.toString())[0];
+            const input=document.createElement("input");
+            input.setAttribute("type", "text");
+            input.setAttribute("id", "p"+i.toString()+"newname");
+            element.appendChild(input);
+        }
+        document.getElementById("rename").setAttribute("onclick", "rename(0)");
+    }
+    else{
+        console.log("done renaming");
+        document.getElementById("rename").value = "Rename";
+        for (let i=1;i<=npersons;i++){
+            let newnametb = document.querySelectorAll("#p"+i.toString()+"newname")[0];
+            let newname = newnametb.value;
+            document.querySelectorAll("#p"+i.toString())[0].innerHTML = newname;
+            newnametb.remove();
+        }
+        document.getElementById("rename").setAttribute("onclick", "rename(1)");
+    }
+    
 }
 
 function importData(){
     var i = 1;
+    var total = 0;
     fetch("./items.json")
         .then(response => {return response.json();})
         .then(data => {
@@ -137,6 +150,9 @@ function importData(){
                     itemprice.innerHTML = data[key];
                     person.innerHTML = "<input type='checkbox' class='person-involved p1i"+i.toString()+"' >";
                     i++;
+                }
+                if (data.hasOwnProperty(key) && key=="ORDER TOTAL"){
+                    document.getElementById('totalPrice').innerHTML = data[key];
                 }
             }
             setActionListeners();

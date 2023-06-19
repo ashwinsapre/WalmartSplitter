@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import json
+import sys
 
 def parse_html(file_path):
     f = open(file_path, "r")
@@ -16,3 +17,5 @@ def parse_html(file_path):
     items['TAXES AND TIP'] = round(items['ORDER TOTAL'] - sum([items[k] for k in items.keys() if k!="ORDER TOTAL"]),2)
     with open('items.json', 'w') as fp:
         json.dump(items, fp)
+
+parse_html(sys.argv[1])
