@@ -1,11 +1,9 @@
 function getPersons(){
-    return document.getElementById('full-table').rows[0].cells.length-2;
+    return document.getElementById('full-table').rows[0].cells.length-3;
 }
-
 function getItems(){
     return document.getElementById("full-table").rows.length-2;
 }
-
 function setActionListeners(){
     var checkboxes = document.querySelectorAll(".person-involved");
     checkboxes.forEach(element => {
@@ -14,6 +12,10 @@ function setActionListeners(){
     var names = document.querySelectorAll(".persons-row");
     names.forEach(element => {
         element.addEventListener("onClick", rename)
+    });
+    var selectalls = document.querySelectorAll(".all");
+    selectalls.forEach(element => {
+        element.addEventListener("change", selectAll)
     });
 }
 function ready(){
@@ -127,9 +129,8 @@ function rename(dorename){
         }
         document.getElementById("rename").setAttribute("onclick", "rename(1)");
     }
-    
+    document.getElementById('add-person').disabled=false;
 }
-
 function importData(){
     var i = 1;
     var total = 0;
@@ -145,9 +146,11 @@ function importData(){
                     var itemname = row.insertCell(0);
                     var itemprice = row.insertCell(1);
                     itemprice.setAttribute('class', 'price i'+i.toString());
-                    var person = row.insertCell(2);
+                    var allin = row.insertCell(2);
+                    var person = row.insertCell(3);
                     itemname.innerHTML = key;
                     itemprice.innerHTML = data[key];
+                    allin.innerHTML = "<input type='checkbox' id='allin"+i.toString()+"' class='all' >";
                     person.innerHTML = "<input type='checkbox' class='person-involved p1i"+i.toString()+"' >";
                     i++;
                 }
@@ -159,4 +162,7 @@ function importData(){
             document.getElementById("add-bill").disabled=true;
             document.getElementById("add-person").disabled=false;
         });
+}
+function selectAll(){
+    console.log("Clicked on select all");
 }
