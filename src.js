@@ -54,7 +54,7 @@ function recalc(){
             for (let j=1;j<=n_persons;j++){
                 let person_class = "p"+j.toString();
                 if (document.getElementsByClassName(person_class+item_class)[0].checked == true){
-                    person_totals[j]=person_totals[j]+item_price/n_divisions;
+                    person_totals[j]=Number.parseFloat((person_totals[j]+(item_price/n_divisions)).toFixed(2));
            }
         }
         }
