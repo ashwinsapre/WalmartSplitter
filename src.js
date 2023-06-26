@@ -1,5 +1,5 @@
 function getPersons(){
-    return document.getElementById('full-table').rows[0].cells.length-3;
+    return document.getElementById('full-table').rows[0].cells.length-4;
 }
 function getItems(){
     return document.getElementById("full-table").rows.length-2;
@@ -14,6 +14,10 @@ function setActionListeners(){
         element.addEventListener("onClick", rename)
     });
     var selectalls = document.querySelectorAll(".all");
+    selectalls.forEach(element => {
+        element.addEventListener("change", selectAll)
+    });
+    var qtysplits = document.querySelectorAll(".qty");
     selectalls.forEach(element => {
         element.addEventListener("change", selectAll)
     });
@@ -141,9 +145,11 @@ function importData(){
                     var itemprice = row.insertCell(1);
                     itemprice.setAttribute('class', 'price'+i.toString());
                     var allin = row.insertCell(2);
-                    var person = row.insertCell(3);
+                    var qtysplit = row.insertCell(3);
+                    var person = row.insertCell(4);
                     itemname.innerHTML = key;
                     itemprice.innerHTML = data[key];
+                    qtysplit.innerHTML = "<input type='checkbox' id='qtysplit"+i.toString()+"' class='qty' >";
                     allin.innerHTML = "<input type='checkbox' id='allin"+i.toString()+"' class='all' >";
                     person.innerHTML = "<input type='checkbox' class='person-involved p1i"+i.toString()+" i"+i.toString()+"' >";
                     i++;
@@ -169,4 +175,7 @@ function selectAll(){
         }
     }
     recalc();
+}
+function splitByQty(){
+    console.log("Activated split by qty");
 }
