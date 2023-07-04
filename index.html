@@ -21,6 +21,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 </head>
 <body onload="ready()">
+    <br>
+    <input type="button" value="Rename Participants" id="rename" onclick="rename(1)">
+    <input type="button" value="Add a participant" id="add-person" onclick="addPerson()" disabled="true">
+    <input type="button" value="Import bill" id="add-bill" onclick="importData()">
+    <br>
+    <br>
     <table id="full-table">
         <thead>
             <tr class="persons-row">
@@ -33,18 +39,16 @@
         </thead>
         <tbody>
             <tr class="totals-row">
-                <td>Totals </td>
+                <td>Total </td>
                 <td id="totalPrice">All items total </td>
+                <td></td>
                 <td></td>
                 <td id="p1total">0</td>
             </tr>
         </tbody>
     </table>
     <br>
-    <input type="button" value="Add a participant" id="add-person" onclick="addPerson()" disabled="true">
-    <input type="button" value="Import bill" id="add-bill" onclick="importData()">
-    <input type="button" value="Rename" id="rename" onclick="rename(1)">
-    <br>
+    
     Amount unaccounted for:
     <input type="text" value="" id="rem-total" disabled=true>
 </body>
