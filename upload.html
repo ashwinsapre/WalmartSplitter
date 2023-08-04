@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.24.min.js"></script>
+    <meta charset='utf-8'>
+    <title>Split the Bill</title>
+    <script>
+        var bucketName = 'splitter-data';
+        var bucketRegion = 'us-east-1';
+        var IdentityPoolId = 'us-east-1:8e5dfb6f-c300-4770-86f4-1b055af8ea37';
+        AWS.config.update({
+                region: bucketRegion,
+                credentials: new AWS.CognitoIdentityCredentials({
+                    IdentityPoolId: IdentityPoolId
+                })
+            });
+
+        var s3 = new AWS.S3({
+            apiVersion: '2006-03-01',
+            params: {Bucket: bucketName}
+        });
+
+        function uploadToS3(){
+            var files = document.getElementById('fileupload').files;
+            if (files) {
+                var file = files[0];
+                var fileName = Math.random().toString(36).slice(2, 7);
+                var filePath = fileName;
+                var fileUrl = 'https://' + bucketRegion + '.amazonaws.com/' +  filePath;
+                s3.upload({
+                    Key: filePath,
+                    Body: file
+                    }, function(err, data) {
+                    if(err) {
+                        console.log(err);
+                    }
+                    else{
+
+                        alert('Successfully Uploaded! Parsing file... Results will open in a new window');
+                        setTimeout(function() { your_func(); }, 5000);
+                        window.open("https://splitter-website.s3.amazonaws.com/"+fileName+"/index.html");
+                    }
+                    });
+            }
+        };
+
+    </script>
+</head>
+<body>
+
+    <h2>Walmart Splitter App</h2>
+
+    Log in to your account, go to an order, save the HTML page and upload it here:
+    <br>
+
+        <input id="fileupload" type="file">
+        <input type="submit" value="Split the Bill" onclick="uploadToS3()">    
+</body>
+</html>
